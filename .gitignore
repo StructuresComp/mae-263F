@@ -1,0 +1,9 @@
+venv/
+.venv/
+env/
+ENV/
+
+*.png
+*.jpg
+*.jpeg
+*.pdf
