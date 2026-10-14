@@ -1,5 +1,7 @@
 import numpy as np
 
+from crossMat import crossMat
+
 # Include Panetta et al. 2019 correction
 
 def gradEt_hessEt_panetta(node0 = None,node1 = None,node2 = None,theta_e = None,

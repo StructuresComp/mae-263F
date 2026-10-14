@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def gradEb(xkm1, ykm1, xk, yk, xkp1, ykp1, curvature0, l_k, EI):
     """
     Returns the derivative of bending energy E_k^b with respect to

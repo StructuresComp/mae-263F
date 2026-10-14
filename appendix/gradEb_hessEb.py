@@ -1,5 +1,7 @@
 import numpy as np
 
+from crossMat import crossMat
+
 # Include Panetta et al. 2019 correction
 
 def gradEb_hessEb(node0 = None,node1 = None,node2 = None,m1e = None,m2e = None,m1f = None,m2f = None,kappaBar = None,l_k = None, EI1 = None, EI2 = None):

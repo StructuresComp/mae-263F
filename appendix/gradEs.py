@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def gradEs(xk, yk, xkp1, ykp1, l_k, EA):
     """
     Calculate the gradient of the stretching energy with respect to the coordinates.
