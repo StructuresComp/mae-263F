@@ -678,14 +678,10 @@ def plotrod_simple(q, ctime):
 # ---------------------------------------------------------------------------
 
 def objfun(qGuess, q0, u, a1, a2,
-           freeIndex,
-           dt, tol,
-           refTwist,
-           massVector, mMat,
-           EA, refLen,
-           EI, GJ, voronoiRefLen,
-           kappaBar, twistBar,
-           Fg):
+           freeIndex, dt, tol,
+           refTwist, massVector, mMat,
+           EA, refLen, EI, GJ, voronoiRefLen,
+           kappaBar, twistBar, Fg):
     q = qGuess
     iter = 0
     error = 10 * tol
