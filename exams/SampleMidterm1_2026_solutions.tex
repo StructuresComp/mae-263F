@@ -1,0 +1,475 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MAE 263F - Fall 2026 - SAMPLE Midterm 1: SOLUTIONS
+% 29 multiple-choice questions (the actual midterm has 20 x 0.5 pts = 10 pts), 100 minutes
+% Companion to SampleMidterm1_2026.tex (same questions and options).
+%
+% HOW TO EDIT:
+%   Each question is one \sol{...} call:
+%     \sol{<stem>}{<a>}{<b>}{<c>}{<d>}{<correct letter>}{<worked solution>}
+%   The correct option is printed in bold with a check mark.
+%   If you change a question in SampleMidterm1_2026.tex, update it here too.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[letterpaper,11pt]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[top = 2.5cm, bottom = 2.5cm, left = 2.5cm, right = 2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{setspace}
+\setlength{\parindent}{0in}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{physics}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{figs/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Header and footer
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\footnotesize MAE-263F Sample Midterm 1: Solutions}
+\rhead{\footnotesize \thepage \ of \pageref{LastPage}}
+\lfoot{\footnotesize Copyright notice: Do not copy, distribute, republish, upload, post or transmit anything from the files hosted on the class website without written permission of the instructor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Solution macro
+%   \sol{stem}{a}{b}{c}{d}{correct letter}{worked solution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcounter{qnum}
+\newcommand{\opt}[3]{\item \if#1#2{\boldmath\textbf{#3}} \quad \textcolor{OliveGreen}{\checkmark}\else #3\fi}
+\newcommand{\sol}[7]{%
+  \stepcounter{qnum}%
+  \section*{Question \theqnum}
+  #1
+  \begin{enumerate}[label=(\alph*)]
+    \opt{a}{#6}{#2}
+    \opt{b}{#6}{#3}
+    \opt{c}{#6}{#4}
+    \opt{d}{#6}{#5}
+  \end{enumerate}
+  \vspace{1mm}
+  \textbf{Answer: (#6)}
+
+  \textbf{Solution.} #7
+
+  \vspace{2mm}\hrule
+}
+
+%
+% Shared problem setups (repeated on each page of a question set)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\twistsetup}{A discrete rod has three nodes, $\mathbf{x}_0 = [0, 0, 0]$, $\mathbf{x}_1 = [1, 0, 0]$, and $\mathbf{x}_2 = [1, 1, 0]$ (in meters), and two edges, $\mathbf{e}^0 = \mathbf{x}_1 - \mathbf{x}_0$ and $\mathbf{e}^1 = \mathbf{x}_2 - \mathbf{x}_1$. The material frames on the two edges are
+\[
+\mathbf{m}^0_1 = [0, 0, 1], \; \mathbf{m}^0_2 = [0, -1, 0] \;\; \text{on } \mathbf{e}^0, \qquad
+\mathbf{m}^1_1 = [1, 0, 0], \; \mathbf{m}^1_2 = [0, 0, -1] \;\; \text{on } \mathbf{e}^1.
+\]\ignorespaces}
+\newcommand{\refsetup}{The (time-parallel) reference frames on the two edges are
+\[
+\mathbf{a}^0_1 = [0, 0, 1], \; \mathbf{a}^0_2 = [0, -1, 0] \;\; \text{on } \mathbf{e}^0, \qquad
+\mathbf{a}^1_1 = \tfrac{1}{\sqrt{2}} [1, 0, 1], \; \mathbf{a}^1_2 = \tfrac{1}{\sqrt{2}} [1, 0, -1] \;\; \text{on } \mathbf{e}^1.
+\]\ignorespaces}
+\newcommand{\rodsetup}{A discrete rod has three nodes, $\mathbf{x}_0 = [0, 0, 0]$, $\mathbf{x}_1 = [2, 0, 0]$, and $\mathbf{x}_2 = [2, 3, 0]$ (in meters). Both edges have undeformed length $2$~m, and the rod is naturally straight ($\boldsymbol{\kappa}^0 = \mathbf{0}$). The material frames are
+\[
+\mathbf{m}^0_1 = [0, 1, 0], \; \mathbf{m}^0_2 = [0, 0, 1] \;\; \text{on } \mathbf{e}^0, \qquad
+\mathbf{m}^1_1 = [-1, 0, 0], \; \mathbf{m}^1_2 = [0, 0, 1] \;\; \text{on } \mathbf{e}^1.
+\]
+The stiffnesses are $EA = 4$~N, $EI = 1$~N$\cdot$m$^2$, and $GJ = 1$~N$\cdot$m$^2$.\space}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\noindent\begin{tabular}{@{}p{\linewidth}@{}}
+{\large \bf Mechanics of Flexible Structures \& Soft Robots} \\
+MAE-263F \\ Fall 2026 \\
+\hline
+\end{tabular}
+
+\begin{center}
+    {\LARGE \bf MAE-263F Sample Midterm 1: Solutions}
+\end{center}
+
+\textit{This sample midterm has 29 problems. The actual midterm will have 20 problems, each worth 0.5 pts.}
+
+%
+% Question 1
+%
+\sol{Newton's method is used to solve $f(x) = x^2 - 3x + 2 = 0$ with the initial guess $x_0 = 0$. What is $x_1$ after \textbf{one} Newton iteration?}
+  {$x_1 = 1$}
+  {$x_1 = 2/3$}
+  {$x_1 = -2/3$}
+  {$x_1 = 3/2$}
+  {b}
+  {$f(0) = 2$ and $f'(x) = 2x - 3$, so $f'(0) = -3$. Then $x_1 = x_0 - f(x_0)/f'(x_0) = 0 - 2/(-3) = 2/3$.}
+
+%
+% Question 2
+%
+\sol{Consider the system of equations
+\[
+f_1 \equiv x_1^3 + x_2 = 0, \qquad f_2 \equiv -x_1 + x_2^3 + 1 = 0.
+\]
+What is the Jacobian $\mathbf{J}$, with $J_{ij} = \partial f_i / \partial x_j$, evaluated at $(x_1, x_2) = (1, 2)$?}
+  {$\mqty[3 & -1 \\ 1 & 12]$}
+  {$\mqty[3 & 1 \\ -1 & 6]$}
+  {$\mqty[3 & 1 \\ -1 & 12]$}
+  {$\mqty[1 & 1 \\ -1 & 8]$}
+  {c}
+  {$\mathbf{J} = \mqty[\partial f_1/\partial x_1 & \partial f_1/\partial x_2 \\ \partial f_2/\partial x_1 & \partial f_2/\partial x_2] = \mqty[3x_1^2 & 1 \\ -1 & 3x_2^2]$. At $(1, 2)$: $\mathbf{J} = \mqty[3 & 1 \\ -1 & 12]$. (Option (a) is the transpose.)}
+
+%
+% Question 3
+%
+\sol{Consider the system of equations
+\[
+f_1 \equiv x_1^2 - x_2 = 0, \qquad f_2 \equiv x_1 + x_2 - 2 = 0.
+\]
+Starting from the initial guess $\mathbf{x}_0 = [0, \; 0]^T$, what is $\mathbf{x}_1$ after \textbf{one} Newton iteration, $\mathbf{x}_1 = \mathbf{x}_0 - \mathbf{J}^{-1} \mathbf{f}$?}
+  {$\mathbf{x}_1 = [2, \; 0]^T$}
+  {$\mathbf{x}_1 = [-2, \; 0]^T$}
+  {$\mathbf{x}_1 = [1, \; 1]^T$}
+  {$\mathbf{x}_1 = [0, \; 2]^T$}
+  {a}
+  {At $\mathbf{x}_0 = [0, 0]^T$: $\mathbf{f} = [0^2 - 0, \; 0 + 0 - 2]^T = [0, -2]^T$ and $\mathbf{J} = \mqty[2x_1 & -1 \\ 1 & 1] = \mqty[0 & -1 \\ 1 & 1]$.
+Solve $\mathbf{J} \Delta\mathbf{x} = \mathbf{f}$: row 1 gives $-\Delta x_2 = 0 \Rightarrow \Delta x_2 = 0$; row 2 gives $\Delta x_1 + \Delta x_2 = -2 \Rightarrow \Delta x_1 = -2$.
+Update: $\mathbf{x}_1 = \mathbf{x}_0 - \Delta\mathbf{x} = [0, 0]^T - [-2, 0]^T = [2, 0]^T$. (Option (b) adds $\Delta\mathbf{x}$ instead of subtracting it.)}
+
+%
+% Question 4
+%
+\sol{For the same system as Question 3, $f_1 \equiv x_1^2 - x_2 = 0$ and $f_2 \equiv x_1 + x_2 - 2 = 0$, Newton's method fails at the first iteration if the Jacobian is singular ($\det \mathbf{J} = 0$). For which initial guess $\mathbf{x}_0 = [x_1, \; x_2]^T$ does this happen?}
+  {$[0, \; 0]^T$}
+  {$[1, \; 1]^T$}
+  {$[0.5, \; -3]^T$}
+  {$[-0.5, \; 3]^T$}
+  {d}
+  {$\mathbf{J} = \mqty[2x_1 & -1 \\ 1 & 1]$, so $\det \mathbf{J} = 2x_1 + 1$, which is zero when $x_1 = -0.5$ (for any $x_2$). For the other options, $\det \mathbf{J} = 1$, $3$, and $2$.}
+
+%
+% Question 5
+%
+\sol{Two masses, each with $m = 1$~kg, move along the $x$-axis and are connected by one linear spring with stiffness $k = 50$~N/m. Neither mass is fixed, and there is no damping or external force. The elastic energy is $E = \frac{1}{2} k (x_2 - x_1 - L)^2$, where $L$ is the rest length. The system is simulated with implicit Euler and $\Delta t = 0.1$~s, so the Jacobian is $J_{ij} = \frac{m_i}{\Delta t^2} \delta_{ij} + \frac{\partial^2 E}{\partial x_i \partial x_j}$. What is $\det \mathbf{J}$?}
+  {$0$}
+  {$20{,}000$}
+  {$22{,}500$}
+  {$10{,}000$}
+  {b}
+  {The Hessian of $E$ is $k \mqty[1 & -1 \\ -1 & 1] = \mqty[50 & -50 \\ -50 & 50]$ and $m/\Delta t^2 = 1/0.01 = 100$. Thus
+\[ \mathbf{J} = \mqty[150 & -50 \\ -50 & 150], \qquad \det \mathbf{J} = 150^2 - 50^2 = 22{,}500 - 2{,}500 = 20{,}000. \]
+The Hessian alone is singular ($\det = 0$), but the inertia term makes $\mathbf{J}$ invertible, so the dynamic simulation works even with no fixed DOFs.}
+
+%
+% Question 6
+%
+\sol{For the same two-mass system as Question 5, the Hessian of the elastic energy is
+\[
+\mathbf{H} = \frac{\partial^2 E}{\partial \mathbf{x} \partial \mathbf{x}} = k \mqty[1 & -1 \\ -1 & 1].
+\]
+Which nonzero vector $\mathbf{v}$ lies in the null space of $\mathbf{H}$ (i.e., $\mathbf{H}\mathbf{v} = \mathbf{0}$)?}
+  {$\mathbf{v} = [1, \; 1]^T$}
+  {$\mathbf{v} = [1, \; -1]^T$}
+  {$\mathbf{v} = [1, \; 0]^T$}
+  {$\mathbf{v} = [0, \; 1]^T$}
+  {a}
+  {$\mathbf{H} [1, 1]^T = k [1 - 1, \; -1 + 1]^T = \mathbf{0}$. Physically, moving both masses by the same amount (a rigid translation) does not change the spring length, so it does not change the elastic energy.}
+
+%
+% Question 7
+%
+\sol{What is the cross product $\mathbf{a} \times \mathbf{b}$, where $\mathbf{a} = [1, \; 1, \; 3]$ and $\mathbf{b} = [-2, \; 3, \; 5]$?}
+  {$[4, \; 11, \; -5]$}
+  {$[-4, \; 11, \; 5]$}
+  {$[-4, \; -11, \; 5]$}
+  {$[14, \; -11, \; 5]$}
+  {c}
+  {$\mathbf{a} \times \mathbf{b} = [a_2 b_3 - a_3 b_2, \; a_3 b_1 - a_1 b_3, \; a_1 b_2 - a_2 b_1] = [1 \cdot 5 - 3 \cdot 3, \; 3 \cdot (-2) - 1 \cdot 5, \; 1 \cdot 3 - 1 \cdot (-2)] = [-4, -11, 5]$. (Option (a) is $\mathbf{b} \times \mathbf{a}$.)}
+
+%
+% Question 8
+%
+\sol{A 2D discrete beam has three nodes, $\mathbf{x}_1 = (0, 0)$, $\mathbf{x}_2 = (1, 0)$, and $\mathbf{x}_3 = (1, -1)$. Using the turning angle $\phi_2 = \tan^{-1} \frac{(\mathbf{e}^1 \times \mathbf{e}^2) \cdot \hat{\mathbf{e}}_z}{\mathbf{e}^1 \cdot \mathbf{e}^2}$ and the discrete curvature $\kappa_2 = 2 \tan(\phi_2 / 2)$, what is $\kappa_2$? (Evaluate $\tan^{-1}$ as the four-quadrant arctangent, $\operatorname{atan2}(\text{numerator}, \text{denominator})$.)}
+  {$2$}
+  {$-2$}
+  {$1$}
+  {$-\pi/2$}
+  {b}
+  {$\mathbf{e}^1 = (1, 0)$ and $\mathbf{e}^2 = (0, -1)$. The $z$-component of $\mathbf{e}^1 \times \mathbf{e}^2$ is $1 \cdot (-1) - 0 \cdot 0 = -1$, and $\mathbf{e}^1 \cdot \mathbf{e}^2 = 0$. Since the denominator is $0$ and the numerator is negative, $\phi_2 = \operatorname{atan2}(-1, 0) = -\pi/2$, and $\kappa_2 = 2 \tan(-\pi/4) = -2$. (Option (a) ignores the sign; option (d) is $\phi_2$, not $\kappa_2$.)}
+
+%
+% Question 9
+%
+\clearpage % keep the figure, question, and solution on one page
+\sol{The figure below shows two edges of a 2D discrete beam meeting at a node with turning angle $\varphi_k$. The circle (radius $R_k$) touches each edge at a distance $\delta_1 = \delta_2 = \delta$ from the node, and each radius drawn to a touching point is perpendicular to its edge.
+\begin{center}
+\includegraphics[width=0.33\textwidth]{Fig_osculating_circle.png}
+\end{center}
+If $\delta = 1$~m and $\varphi_k = 60\degree$, what is $R_k$?}
+  {$1/\sqrt{3}$~m}
+  {$2\sqrt{3}$~m}
+  {$2$~m}
+  {$\sqrt{3}$~m}
+  {d}
+  {In the right triangle formed by the center of the circle, a touching point, and the node, the angle at the center is $\beta = \varphi_k / 2$, the side opposite to it is $\delta$, and the side next to it is $R_k$. So $\tan(\varphi_k/2) = \delta / R_k$ and
+\[ R_k = \frac{\delta}{\tan(\varphi_k/2)} = \frac{1}{\tan 30\degree} = \frac{1}{1/\sqrt{3}} = \sqrt{3}~\text{m}. \]
+When the circle touches each edge at its midpoint, $\delta = \Delta l / 2$ and this becomes
+\[ R_k = \frac{\Delta l}{2 \tan(\varphi_k/2)} = \frac{\Delta l}{\kappa_k}. \]}
+
+%
+% Question 10
+%
+\sol{A 2D discrete beam has three nodes, $\mathbf{x}_1 = (0, 0)$, $\mathbf{x}_2 = (2, 0)$, and $\mathbf{x}_3 = (2, 2)$, with all lengths in meters. Both edges have the same length, $\Delta l = 2$~m. What is the radius $R_2$ of the osculating circle at $\mathbf{x}_2$, i.e., the circle that touches each edge at its midpoint?}
+  {$1$~m}
+  {$2$~m}
+  {$0.5$~m}
+  {$4$~m}
+  {a}
+  {$\mathbf{e}^1 = (2, 0)$ and $\mathbf{e}^2 = (0, 2)$: the cross product ($z$) is $4$ and the dot product is $0$, so $\phi_2 = \pi/2$ and $\kappa_2 = 2 \tan(\pi/4) = 2$. The circle touches each edge at its midpoint, so $R_2 = \Delta l / \kappa_2 = 2/2 = 1$~m (see Question 9 with $\delta = \Delta l / 2 = 1$~m: $R_2 = 1/\tan 45\degree = 1$~m).}
+
+%
+% Question 11
+%
+\sol{A 2D discrete beam has three nodes, $\mathbf{x}_1 = (0, 0)$, $\mathbf{x}_2 = (1, 0)$, and $\mathbf{x}_3 = (1, 1)$, with all lengths in meters. The undeformed edge length is $\Delta l = 1$~m, the bending stiffness is $EI = 2$~N$\cdot$m$^2$, and the natural curvature at $\mathbf{x}_2$ is $\kappa^0_2 = 1$. What is the bending energy $E_{b,2} = \frac{1}{2} \frac{EI}{\Delta l} (\kappa_2 - \kappa^0_2)^2$?}
+  {$4$~J}
+  {$9$~J}
+  {$1$~J}
+  {$2$~J}
+  {c}
+  {$\mathbf{e}^1 = (1, 0)$ and $\mathbf{e}^2 = (0, 1)$, so $\phi_2 = \pi/2$ and $\kappa_2 = 2$.
+$E_{b,2} = \frac{1}{2} \cdot \frac{2}{1} \cdot (2 - 1)^2 = 1$~J. (Option (a) ignores the natural curvature; option (b) uses $\kappa_2 + \kappa^0_2$.)}
+
+%
+% Question 12
+%
+\sol{An edge of a discrete beam connects $\mathbf{x}_1 = (0, 0)$ and $\mathbf{x}_2 = (3, 4)$, with lengths in meters. Its undeformed length is $\Delta l = 4$~m and its stretching stiffness is $EA = 100$~N. What is the stretching energy $E_s = \frac{1}{2} EA \, \varepsilon^2 \Delta l$, where $\varepsilon = \frac{|\mathbf{x}_2 - \mathbf{x}_1|}{\Delta l} - 1$?}
+  {$50$~J}
+  {$3.125$~J}
+  {$25$~J}
+  {$12.5$~J}
+  {d}
+  {$|\mathbf{x}_2 - \mathbf{x}_1| = \sqrt{3^2 + 4^2} = 5$~m, so $\varepsilon = 5/4 - 1 = 0.25$.
+$E_s = \frac{1}{2} \cdot 100 \cdot 0.25^2 \cdot 4 = \frac{1}{2} \cdot 100 \cdot 0.0625 \cdot 4 = 12.5$~J. (Option (b) forgets the factor $\Delta l$; option (c) forgets the $\frac{1}{2}$.)}
+
+%
+% Question 13
+%
+\sol{An edge of a discrete rod goes from $\mathbf{x}_1 = (0, 0, 0)$ to $\mathbf{x}_2 = (0, 0, 2)$. Which of the following $(\mathbf{m}_1, \mathbf{m}_2, \mathbf{t})$ is an orthonormal adapted frame on this edge? (Recall that it must satisfy $\mathbf{m}_1 \times \mathbf{m}_2 = \mathbf{t}$.)}
+  {$\mathbf{m}_1 = (1, 0, 0)$, $\mathbf{m}_2 = (0, -1, 0)$, $\mathbf{t} = (0, 0, 1)$}
+  {$\mathbf{m}_1 = (0, 1, 0)$, $\mathbf{m}_2 = (-1, 0, 0)$, $\mathbf{t} = (0, 0, 1)$}
+  {$\mathbf{m}_1 = (1, 1, 0)$, $\mathbf{m}_2 = (-1, 1, 0)$, $\mathbf{t} = (0, 0, 1)$}
+  {$\mathbf{m}_1 = (1, 0, 0)$, $\mathbf{m}_2 = (0, 0, -1)$, $\mathbf{t} = (0, 1, 0)$}
+  {b}
+  {The tangent is $\mathbf{t} = (0, 0, 2)/2 = (0, 0, 1)$. In (b), the three vectors are unit vectors, they are mutually orthogonal, and $\mathbf{m}_1 \times \mathbf{m}_2 = (0, 1, 0) \times (-1, 0, 0) = (0, 0, 1) = \mathbf{t}$.
+(a) gives $\mathbf{m}_1 \times \mathbf{m}_2 = (0, 0, -1) = -\mathbf{t}$; (c) has vectors that are not unit length; (d) is a right-handed orthonormal frame ($\mathbf{m}_1 \times \mathbf{m}_2 = (0, 1, 0) = \mathbf{t}$), but it is not adapted, because its $\mathbf{t}$ is not along the edge.}
+
+%
+% Question 14
+%
+\sol{Why is a material frame (or, equivalently, a twist angle on each edge) needed in addition to the nodal coordinates to describe a 3D discrete elastic rod?}
+  {The nodal coordinates describe only the centerline; they cannot capture the rotation (twist) of the cross-section about the centerline.}
+  {The nodal coordinates cannot describe the bending curvature of a rod in 3D.}
+  {The material frame is needed to compute the stretching energy of each edge.}
+  {Without a material frame, the Jacobian of the 3D rod is always singular, even when some DOFs are fixed.}
+  {a}
+  {The nodes describe only the centerline. Rotating the cross-section about the centerline (twisting the rod) leaves every node where it is but changes the elastic energy, so an extra quantity (the material frame, or the twist angle $\theta^k$ on each edge) is needed.}
+
+%
+% Question 15
+%
+\sol{A discrete rod has three nodes,
+\[
+\mathbf{x}_0 = [0, \; 0, \; 0], \qquad \mathbf{x}_1 = [1, \; 0, \; 0], \qquad \mathbf{x}_2 = [1, \; 1, \; 0],
+\]
+and two edges, $\mathbf{e}^0 = \mathbf{x}_1 - \mathbf{x}_0$ and $\mathbf{e}^1 = \mathbf{x}_2 - \mathbf{x}_1$. The vector $\mathbf{u} = [1, \; 0, \; 0]$ lies on the first edge. What is the result of parallel transporting $\mathbf{u}$ from the first edge ($\mathbf{e}^0$) to the second edge ($\mathbf{e}^1$)?}
+  {$[1, \; 0, \; 0]$}
+  {$[0, \; 0, \; 1]$}
+  {$[0, \; 1, \; 0]$}
+  {$[-1, \; 0, \; 0]$}
+  {c}
+  {$\mathbf{t}^0 = [1, 0, 0]$ and $\mathbf{t}^1 = [0, 1, 0]$. Following the steps in the notes:
+$\mathbf{b} = \mathbf{t}^0 \times \mathbf{t}^1 = [0, 0, 1] = \hat{\mathbf{b}}$, \;
+$\mathbf{n}_1 = \mathbf{t}^0 \times \hat{\mathbf{b}} = [0, -1, 0]$, \;
+$\mathbf{n}_2 = \mathbf{t}^1 \times \hat{\mathbf{b}} = [1, 0, 0]$.
+With $\mathbf{u} = [1, 0, 0]$: $\mathbf{u} \cdot \mathbf{t}^0 = 1$, $\mathbf{u} \cdot \mathbf{n}_1 = 0$, $\mathbf{u} \cdot \hat{\mathbf{b}} = 0$, so
+$\mathbf{d} = 1 \cdot \mathbf{t}^1 + 0 + 0 = [0, 1, 0]$.
+Here $\mathbf{u}$ is the tangent of the first edge, and parallel transport maps it to the tangent of the second edge.}
+
+%
+% Question 16
+%
+\sol{Which statement about parallel transport of a vector $\mathbf{u}$ (with $\mathbf{u} \perp \mathbf{t}^{k-1}$) from edge $\mathbf{e}^{k-1}$ to edge $\mathbf{e}^{k}$ is \textbf{FALSE}?}
+  {The result is perpendicular to $\mathbf{t}^{k}$ and has the same length as $\mathbf{u}$.}
+  {If $\mathbf{t}^{k} = \mathbf{t}^{k-1}$, the result is $\mathbf{u}$ itself.}
+  {It is equivalent to rotating $\mathbf{u}$ about the axis $\mathbf{t}^{k-1} \times \mathbf{t}^{k}$ by the angle between $\mathbf{t}^{k-1}$ and $\mathbf{t}^{k}$.}
+  {It rotates $\mathbf{u}$ about the tangent $\mathbf{t}^{k}$ by the integrated twist $\tau_k$.}
+  {d}
+  {Parallel transport is the twist-free way of moving a vector from one edge to the next: it rotates about $\mathbf{t}^{k-1} \times \mathbf{t}^k$ (statement (c)) and adds no rotation about the tangent. So (d) is false. Statements (a)--(c) are true.}
+
+%
+% Question 17
+%
+\sol{Two consecutive edges of a rod are collinear, with $\mathbf{t}^1 = \mathbf{t}^2 = (1, 0, 0)$. The first material directors are $\mathbf{m}^1_1 = (0, 1, 0)$ and $\mathbf{m}^2_1 = (0, 0, 1)$. The integrated twist $\tau_2$ is the signed angle from $P^2_1(\mathbf{m}^1_1)$ to $\mathbf{m}^2_1$ about $\mathbf{t}^2$. What is $\tau_2$?}
+  {$\pi/2$}
+  {$-\pi/2$}
+  {$0$}
+  {$\pi$}
+  {a}
+  {The tangents are equal, so parallel transport does nothing: $P^2_1(\mathbf{m}^1_1) = \mathbf{m}^1_1 = (0, 1, 0)$. The angle between $(0, 1, 0)$ and $(0, 0, 1)$ is $\pi/2$, and $(0, 1, 0) \times (0, 0, 1) = (1, 0, 0) = +\mathbf{t}^2$, so the sign is positive: $\tau_2 = \pi/2$.}
+
+%
+% Question 18
+%
+\sol{In the DER algorithm (time-parallel reference frame), the twist angles on two consecutive edges are $\theta^1 = 0.1$~rad and $\theta^2 = 0.4$~rad, and the integrated reference twist at node $\mathbf{x}_2$ is $\Delta m_{2,\text{ref}} = -0.1$~rad. What is the integrated discrete twist $\tau_2$?}
+  {$0.4$~rad}
+  {$0.2$~rad}
+  {$0.3$~rad}
+  {$0.5$~rad}
+  {b}
+  {$\tau_2 = (\theta^2 - \theta^1) + \Delta m_{2,\text{ref}} = (0.4 - 0.1) + (-0.1) = 0.2$~rad. (Option (c) ignores the reference twist.)}
+
+%
+% Question 19
+%
+\sol{At node $\mathbf{x}_2$ of a discrete rod, the integrated twist is $\tau_2 = 0.5$~rad and the twisting stiffness is $GJ = 2$~N$\cdot$m$^2$. The undeformed lengths of the two neighboring edges are $|\bar{\mathbf{e}}^1| = 1$~m and $|\bar{\mathbf{e}}^2| = 3$~m. What is the twisting energy $E^t_2 = \frac{1}{2} GJ \tau_2^2 \frac{1}{\bar{l}_2}$?}
+  {$0.25$~J}
+  {$0.0625$~J}
+  {$0.125$~J}
+  {$0.5$~J}
+  {c}
+  {The Voronoi length is $\bar{l}_2 = (1 + 3)/2 = 2$~m. $E^t_2 = \frac{1}{2} \cdot 2 \cdot 0.5^2 \cdot \frac{1}{2} = 0.125$~J.}
+
+%
+% Question 20
+%
+\sol{\twistsetup{}The integrated twist $\tau_1$ at node $\mathbf{x}_1$ is the signed angle from $P^1_0(\mathbf{m}^0_1)$ (the parallel transport of $\mathbf{m}^0_1$ from $\mathbf{e}^0$ to $\mathbf{e}^1$) to $\mathbf{m}^1_1$, about the axis $\mathbf{t}^1$. What is $\tau_1$?}
+  {$0$}
+  {$-\pi/2$}
+  {$\pi$}
+  {$\pi/2$}
+  {d}
+  {$\mathbf{t}^0 = [1, 0, 0]$ and $\mathbf{t}^1 = [0, 1, 0]$, so $\hat{\mathbf{b}} = [0, 0, 1]$. Since $\mathbf{m}^0_1 = [0, 0, 1]$ is along $\hat{\mathbf{b}}$, parallel transport leaves it unchanged: $P^1_0(\mathbf{m}^0_1) = [0, 0, 1]$.
+The angle between $[0, 0, 1]$ and $\mathbf{m}^1_1 = [1, 0, 0]$ is $\pi/2$, and $[0, 0, 1] \times [1, 0, 0] = [0, 1, 0] = +\mathbf{t}^1$, so $\tau_1 = +\pi/2$.}
+
+%
+% Question 21
+%
+\sol{\twistsetup{}The rod is naturally untwisted, both edges have undeformed length $1$~m, and the twisting stiffness is $GJ = 1$~N$\cdot$m$^2$. What is the twisting energy $E^t_1 = \frac{1}{2} GJ \, \tau_1^2 \, \frac{1}{\bar{l}_1}$ at node $\mathbf{x}_1$?}
+  {$\pi^2/8$~J}
+  {$\pi^2/4$~J}
+  {$\pi/4$~J}
+  {$\pi^2/16$~J}
+  {a}
+  {From the previous question, $\tau_1 = \pi/2$. The Voronoi length is $\bar{l}_1 = (1 + 1)/2 = 1$~m.
+$E^t_1 = \frac{1}{2} \cdot 1 \cdot (\pi/2)^2 \cdot \frac{1}{1} = \pi^2/8$~J.}
+
+%
+% Question 22
+%
+\sol{\twistsetup{}\refsetup{}The reference twist $\Delta m_{1,\text{ref}}$ at node $\mathbf{x}_1$ is the signed angle from $P^1_0(\mathbf{a}^0_1)$ to $\mathbf{a}^1_1$, about the axis $\mathbf{t}^1$. What is $\Delta m_{1,\text{ref}}$?}
+  {$-\pi/4$}
+  {$\pi/4$}
+  {$\pi/2$}
+  {$0$}
+  {b}
+  {$\mathbf{a}^0_1 = [0, 0, 1]$ is along $\hat{\mathbf{b}} = [0, 0, 1]$, so $P^1_0(\mathbf{a}^0_1) = [0, 0, 1]$.
+The angle to $\mathbf{a}^1_1 = \frac{1}{\sqrt{2}}[1, 0, 1]$: $\cos\alpha = [0, 0, 1] \cdot \frac{1}{\sqrt{2}}[1, 0, 1] = 1/\sqrt{2}$, so $\alpha = \pi/4$.
+Sign: $[0, 0, 1] \times [1, 0, 1] = [0, 1, 0]$, along $+\mathbf{t}^1$. So $\Delta m_{1,\text{ref}} = +\pi/4$.}
+
+%
+% Question 23
+%
+\sol{\twistsetup{}\refsetup{}In the DER algorithm, the twist angle $\theta^k$ (a degree of freedom) on edge $\mathbf{e}^k$ is the signed angle from $\mathbf{a}^k_1$ to $\mathbf{m}^k_1$ about $\mathbf{t}^k$. What are $\theta^0$ and $\theta^1$?}
+  {$\theta^0 = \pi/2$, $\theta^1 = \pi/4$}
+  {$\theta^0 = 0$, $\theta^1 = -\pi/4$}
+  {$\theta^0 = 0$, $\theta^1 = \pi/4$}
+  {$\theta^0 = 0$, $\theta^1 = \pi/2$}
+  {c}
+  {Edge 0: $\mathbf{a}^0_1 = \mathbf{m}^0_1 = [0, 0, 1]$, so $\theta^0 = 0$.
+Edge 1: $\cos\theta = \frac{1}{\sqrt{2}}[1, 0, 1] \cdot [1, 0, 0] = 1/\sqrt{2}$, so the angle is $\pi/4$. Sign: $[1, 0, 1] \times [1, 0, 0] = [0, 1, 0]$, along $+\mathbf{t}^1$. So $\theta^1 = +\pi/4$.}
+
+%
+% Question 24
+%
+\sol{\twistsetup{}\refsetup{}Compute the integrated twist at node $\mathbf{x}_1$ a second way, using the DER formula $\tau_1 = (\theta^1 - \theta^0) + \Delta m_{1,\text{ref}}$. What is $\tau_1$?}
+  {$\pi/4$}
+  {$\pi/2$}
+  {$0$}
+  {$3\pi/4$}
+  {b}
+  {$\tau_1 = (\pi/4 - 0) + \pi/4 = \pi/2$. This matches the answer from parallel transporting the material frame (Question 20), as it must.}
+
+%
+% Question 25
+%
+\sol{\rodsetup{}What is the curvature binormal $(\kappa \mathbf{b})_1 = \dfrac{2\, \mathbf{t}^0 \times \mathbf{t}^1}{1 + \mathbf{t}^0 \cdot \mathbf{t}^1}$ at node $\mathbf{x}_1$?}
+  {$[0, 0, 2]$}
+  {$[0, 0, -2]$}
+  {$[0, 0, 1]$}
+  {$[2, 0, 0]$}
+  {a}
+  {The unit tangents are $\mathbf{t}^0 = [1, 0, 0]$ and $\mathbf{t}^1 = [0, 1, 0]$ (the edge lengths do not matter). $\mathbf{t}^0 \times \mathbf{t}^1 = [0, 0, 1]$ and $\mathbf{t}^0 \cdot \mathbf{t}^1 = 0$, so $(\kappa\mathbf{b})_1 = 2[0, 0, 1]/(1 + 0) = [0, 0, 2]$.}
+
+%
+% Question 26
+%
+\sol{\rodsetup{}The material curvatures at node $\mathbf{x}_1$ are $\kappa_1 = \frac{1}{2} (\kappa \mathbf{b})_1 \cdot (\mathbf{m}^0_2 + \mathbf{m}^1_2)$ and $\kappa_2 = -\frac{1}{2} (\kappa \mathbf{b})_1 \cdot (\mathbf{m}^0_1 + \mathbf{m}^1_1)$. What is $\boldsymbol{\kappa}_1 = [\kappa_1, \; \kappa_2]$?}
+  {$[0, \; 2]$}
+  {$[0, \; -2]$}
+  {$[2, \; 0]$}
+  {$[1, \; 0]$}
+  {c}
+  {$\mathbf{m}^0_2 + \mathbf{m}^1_2 = [0, 0, 2]$, so $\kappa_1 = \frac{1}{2} [0, 0, 2] \cdot [0, 0, 2] = 2$.
+$\mathbf{m}^0_1 + \mathbf{m}^1_1 = [-1, 1, 0]$, so $\kappa_2 = -\frac{1}{2} [0, 0, 2] \cdot [-1, 1, 0] = 0$.
+So $\boldsymbol{\kappa}_1 = [2, 0]$.}
+
+%
+% Question 27
+%
+\sol{\rodsetup{}What is the bending energy $E^b_1 = \frac{1}{2} EI \, |\boldsymbol{\kappa}_1 - \boldsymbol{\kappa}^0_1|^2 \, \frac{1}{\bar{l}_1}$ at node $\mathbf{x}_1$?}
+  {$2$~J}
+  {$0.5$~J}
+  {$4$~J}
+  {$1$~J}
+  {d}
+  {The Voronoi length uses the undeformed edge lengths: $\bar{l}_1 = (2 + 2)/2 = 2$~m. With $\boldsymbol{\kappa}^0 = \mathbf{0}$:
+$E^b_1 = \frac{1}{2} \cdot 1 \cdot (2^2 + 0^2) \cdot \frac{1}{2} = 1$~J.}
+
+%
+% Question 28
+%
+\sol{\rodsetup{}What is the total stretching energy of the rod, $E^s = \sum_k \frac{1}{2} EA \left( \frac{|\mathbf{e}^k|}{|\bar{\mathbf{e}}^k|} - 1 \right)^2 |\bar{\mathbf{e}}^k|$?}
+  {$0.5$~J}
+  {$2$~J}
+  {$4$~J}
+  {$1$~J}
+  {d}
+  {Edge 0: $|\mathbf{e}^0| = 2 = |\bar{\mathbf{e}}^0|$, so its energy is $0$.
+Edge 1: $|\mathbf{e}^1| = 3$, so $|\mathbf{e}^1|/|\bar{\mathbf{e}}^1| - 1 = 0.5$ and its energy is $\frac{1}{2} \cdot 4 \cdot 0.5^2 \cdot 2 = 1$~J.
+Total: $E^s = 1$~J.}
+
+%
+% Question 29
+%
+\sol{\rodsetup{}The rod is naturally untwisted. What is the total elastic energy (stretching + bending + twisting) of the rod?}
+  {$1$~J}
+  {$2$~J}
+  {$3$~J}
+  {$0$~J}
+  {b}
+  {Stretching: $E^s = 1$~J. Bending: $E^b = 1$~J (previous questions).
+Twisting: parallel transporting $\mathbf{m}^0_1 = [0, 1, 0]$ from $\mathbf{t}^0 = [1, 0, 0]$ to $\mathbf{t}^1 = [0, 1, 0]$ gives $[-1, 0, 0] = \mathbf{m}^1_1$, so $\tau_1 = 0$ and $E^t = 0$.
+Total: $1 + 1 + 0 = 2$~J.}
+
+\end{document}
