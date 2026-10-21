@@ -20,8 +20,51 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from der_functions import (computeTangent, assignOrthonormalAdaptedFrame, computeSpaceParallel,
-                           computeMaterialDirectors, getKappa, plotrod_simple, objfun)
+                           computeMaterialDirectors, getKappa, plotrod_simple,
+                           computeTimeParallel, getRefTwist, getFs, getFb, getFt)
 
+
+# ---------------------------------------------------------------------------
+# Objective function: one implicit Euler step solved with Newton's method
+# ---------------------------------------------------------------------------
+
+def objfun(qGuess, q0, u, a1, a2,
+           freeIndex, dt, tol,
+           refTwist, massVector, mMat,
+           EA, refLen, EI, GJ, voronoiRefLen,
+           kappaBar, twistBar, Fg):
+    q = qGuess
+    iter = 0
+    error = 10 * tol
+
+    while error > tol:
+        a1Iterate, a2Iterate = computeTimeParallel(a1, q0, q)
+        tangent = computeTangent(q)
+        refTwist_iterate = getRefTwist(a1Iterate, tangent, refTwist)
+        theta = q[3::4]
+        m1, m2 = computeMaterialDirectors(a1Iterate, a2Iterate, theta)
+
+        Fb, Jb = getFb(q, m1, m2, kappaBar, EI, voronoiRefLen)
+        Ft, Jt = getFt(q, refTwist_iterate, twistBar, GJ, voronoiRefLen)
+        Fs, Js = getFs(q, EA, refLen)
+
+        Forces = Fb + Ft + Fs + Fg
+        JForces = Jb + Jt + Js
+        f = np.dot(mMat / dt, (q - q0) / dt - u) - Forces
+        J = mMat / dt**2 - JForces
+        f_free = f[freeIndex]
+        J_free = J[np.ix_(freeIndex, freeIndex)]
+        dq_free = np.linalg.solve(J_free, f_free)
+
+        q[freeIndex] = q[freeIndex] - dq_free
+        error = np.sum(np.abs(f_free))
+        iter += 1
+
+    print(f'Iter={iter}, error={error:.6f}')
+    u = (q - q0) / dt
+    a1 = a1Iterate
+    a2 = a2Iterate
+    return q, u, a1, a2
 
 # ---------------------------------------------------------------------------
 # Main DER
