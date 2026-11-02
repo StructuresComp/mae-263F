@@ -211,6 +211,29 @@ def main():
             print(f'Simulation did not converge at time {t} seconds.')
             break
 
+        # Contact checks
+        corrector_flag = False # No corrector step is necessary by default
+        for i in range(2, N-1): # Go over all the nodes that are not permanently fixed
+            if (2*i + 1) in freeIndex: # Node i is free
+                if q_new[2*i + 1] < groundPosition: # Node i is below the ground
+                    fixedIndex.append(2*i + 1) # Fix it on the ground (no friction) - Only fix y coordinate
+                    q_new[2*i + 1] = groundPosition
+                    corrector_flag = True # A new corrector step is needed
+            else: # Node i is fixed
+                reactionForce = f[2*i : 2*i + 2] # The reaction force is the residual of the equations of motion
+                if np.dot(contact_normal, reactionForce) < 0:
+                    corrector_flag = True # A new corrector step is needed
+                    fixedIndex.remove(2*i + 1) # Release it from the ground (no friction) - Only release y coordinate
+
+        # Predictor step
+        if corrector_flag == True: # A new corrector step is needed
+            freeIndex = np.setdiff1d(np.arange(ndof), fixedIndex)
+            q_new, f, flag = objfun(q_guess, q_old, u_old, dt, qtol, maxIter,
+                                    m, mMat, EI, EA, W, refLength, voronoiLength, freeIndex)
+            if flag < 0:
+                print(f'Simulation did not converge at time {t} seconds in corrector step.')
+                break
+
         u_old = (q_new - q_old) / dt
         q_old = q_new.copy()
 
