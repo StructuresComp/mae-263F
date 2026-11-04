@@ -97,6 +97,7 @@ def objfun(q_guess, q_old, u_old, dt, qtol, maxIter,
     q_new = q_guess.copy() # Position
     u_new = u_old.copy() # Velocity
     a_new = np.zeros_like(u_old) # Acceleration
+    
     iter_count = 0
     error = qtol * 10
 
@@ -117,10 +118,55 @@ def objfun(q_guess, q_old, u_old, dt, qtol, maxIter,
 
         iter_count += 1
         if error > qtol and iter_count >= maxIter:
-            return q_new, -1
-        
+            return q_new, u_new, a_new, -1
+
+    # Update velocity and acceleration
+    u_new = (q_new - q_old) / dt # New vecocity
+    a_new = (u_new - u_old) / dt # New acceleration
     return q_new, u_new, a_new, 1
 
+#
+# Objective function for the Newmark-Beta method
+#
+
+def update_Newmark(q_new, q_old, u_old, a_old, beta, gamma, dt):
+    """Update velocity and acceleration using the Newmark-Beta method."""
+    a_new = (0.5 / beta) * (2.0 / dt * ( (q_new - q_old) / dt - u_old) - (1.0 - 2.0 * beta) * a_old)
+    u_new = u_old + (1.0 - gamma) * dt * a_old + gamma * dt * a_new
+    return u_new, a_new
+
+def objfun_Newmark(q_guess, q_old, u_old, a_old, beta, gamma, dt, qtol, maxIter,
+           m, mMat, EI, EA, W, refLength, voronoiLength, freeIndex):
+    q_new = q_guess.copy() # Position
+    u_new = u_old.copy() # Velocity
+    a_new = a_old.copy() # Acceleration
+
+    iter_count = 0
+    error = qtol * 10
+
+    while error > qtol:
+        Fb, Jb = getFb(q_new, EI, voronoiLength)
+        Fs, Js = getFs(q_new, EA, refLength)
+
+        # Equations of motion and Jacobian
+        u_new, a_new = update_Newmark(q_new, q_old, u_old, a_old, beta, gamma, dt)
+        f = m * a_new - (Fb + Fs + W)
+        J = mMat / (beta * dt**2) - (Jb + Js)
+
+        # Newton update of the free DOFs only
+        f_free = f[freeIndex]
+        J_free = J[np.ix_(freeIndex, freeIndex)]
+        dq_free = np.linalg.solve(J_free, f_free)
+        q_new[freeIndex] = q_new[freeIndex] - dq_free
+        error = np.linalg.norm(dq_free)
+
+        iter_count += 1
+        if error > qtol and iter_count >= maxIter:
+            return q_new, u_new, a_new, -1
+
+    # Update velocity and acceleration
+    u_new, a_new = update_Newmark(q_new, q_old, u_old, a_old, beta, gamma, dt)
+    return q_new, u_new, a_new, 1
 
 # ---------------------------------------------------------------------------
 # Plotting
@@ -147,6 +193,11 @@ def plot_rod(q, ndof, t, RodLength):
 # ---------------------------------------------------------------------------
 
 def main():
+
+    use_Newmark = True  # Use Newmark-Beta method if True, else use implicit Euler
+    beta = 0.25
+    gamma = 0.5
+
     # Geometry: straight beam along x
     N = 20              # number of nodes
     ndof = 2 * N        # number of DOFs
@@ -196,13 +247,18 @@ def main():
 
         # Guess for Newton's method: the fixed DOFs keep these values
         q_guess = q_old.copy()
-        q_new, flag = objfun(q_guess, q_old, u_old, dt, qtol, maxIter,
+        if use_Newmark:
+            q_new, u_new, a_new, flag = objfun_Newmark(q_guess, q_old, u_old, a_old, beta, gamma, dt, qtol, maxIter,
                                             m, mMat, EI, EA, W, refLength, voronoiLength, freeIndex)
-        u_new = (q_new - q_old) / dt
+        else: # Do not use Newmark-Beta method
+            q_new, u_new, a_new, flag = objfun(q_guess, q_old, u_old, dt, qtol, maxIter,
+                                            m, mMat, EI, EA, W, refLength, voronoiLength, freeIndex)
         if flag < 0:
             print(f'Simulation did not converge at time {t} seconds.')
             break
 
+        # Update for the next time step
+        a_old = a_new.copy()
         u_old = u_new.copy()
         q_old = q_new.copy()
 
