@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 
 m = 1      # mass
 K = 1      # spring constant
-b = 0.0    # viscous damping coefficient
-dt = 5e-2  # discrete time step
+b = 0.1    # viscous damping coefficient
+dt = 5e-3  # discrete time step
 F0 = 10    # driving force
 eps = 1e-6 * F0  # error tolerance
-maxTime = 10     # total time of simulation
+maxTime = 100     # total time of simulation
 x_eq = F0 / K    # equilibrium position
 
 beta = 0.25  # average acceleration: 0.25, fully implicit Newmark: 0.5
