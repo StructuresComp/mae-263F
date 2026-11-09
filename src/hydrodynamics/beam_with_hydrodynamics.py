@@ -5,8 +5,9 @@ released from rest under gravity in a fluid.
 Implicit Euler time stepping with Newton's method. The fluid applies a drag force at
 every node, from either the low Reynolds number model (Resistive Force Theory) or the
 high Reynolds number model (quadratic drag); pick the model and its parameters at the
-top of main(). The gradients and Hessians of the elastic energies (gradEb, hessEb,
-gradEs, hessEs) are in ../../appendix.
+top of main(). The background fluid velocity u_f ("wind") is a steady part plus a
+sinusoidal part, so it can drive the beam into oscillation. The gradients and Hessians
+of the elastic energies (gradEb, hessEb, gradEs, hessEs) are in ../../appendix.
 
 Run from anywhere, e.g.:  python src/hydrodynamics/beam_with_hydrodynamics.py
 """
@@ -169,6 +170,11 @@ def getFh(q, q_old, dt, voronoiLength, hydro):
     raise ValueError(f"Unknown hydrodynamic model '{hydro['model']}': use 'none', 'lowRe' or 'highRe'.")
 
 
+def getFluidVelocity(t, U_mean, U_amp, f_wind):
+    """Background fluid velocity at time t: u_f = U_mean + U_amp sin(2 pi f_wind t)."""
+    return U_mean + U_amp * np.sin(2 * np.pi * f_wind * t)
+
+
 # ---------------------------------------------------------------------------
 # One implicit Euler step (Newton's method) with fixed DOFs
 # ---------------------------------------------------------------------------
@@ -211,11 +217,14 @@ def objfun(q_guess, q_old, u_old, dt, qtol, maxIter,
 # Plotting
 # ---------------------------------------------------------------------------
 
-def plot_rod(q, ndof, t, RodLength, hydroModel):
-    """Plot the beam at time t."""
+def plot_rod(q, ndof, t, RodLength, hydroModel, u_f):
+    """Plot the beam and an arrow for the fluid velocity u_f at time t."""
     plt.figure(1)
     plt.clf()
     plt.plot(q[0:ndof:2], q[1:ndof:2], 'ro-', label='Beam')
+    plt.quiver(1.5 * RodLength, 0.5 * RodLength, u_f[0], u_f[1], color='b',
+               angles='xy', scale_units='xy', scale=50,  # 1 m/s is drawn 2 cm long
+               label='Fluid velocity')
     plt.title(f'Hydrodynamics: {hydroModel}, Time={t:.2f} seconds')
     plt.xlim([0, 2.0 * RodLength])
     plt.ylim([-RodLength, RodLength])
@@ -227,17 +236,37 @@ def plot_rod(q, ndof, t, RodLength, hydroModel):
     plt.pause(0.01)  # Display the figure without blocking
 
 
+def plot_tip_and_wind(t, tipPosition, windVelocity):
+    """Plot the position of the free end and the fluid velocity against time."""
+    _, ax = plt.subplots(3, 1, sharex=True, num=2)
+    ax[0].plot(t, tipPosition[:, 0], 'r-')
+    ax[0].set_ylabel('Tip x [m]')
+    ax[1].plot(t, tipPosition[:, 1], 'r-')
+    ax[1].set_ylabel('Tip y [m]')
+    ax[2].plot(t, windVelocity[:, 0], 'b-', label='x')
+    ax[2].plot(t, windVelocity[:, 1], 'b--', label='y')
+    ax[2].set_ylabel('$u_f$ [m/s]')
+    ax[2].set_xlabel('Time, t [s]')
+    ax[2].legend()
+    for a in ax:
+        a.grid(True)
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 def main():
     # Hydrodynamics: pick a model and set its parameters
-    hydroModel = 'lowRe'                # 'none', 'lowRe' (Resistive Force Theory) or 'highRe' (quadratic drag)
-    u_f = np.array([0.0, 0.0])          # background fluid velocity [m/s]
+    hydroModel = 'highRe'               # 'none', 'lowRe' (Resistive Force Theory) or 'highRe' (quadratic drag)
     mu = 1.0                            # lowRe: dynamic viscosity [Pa s]
     rho_f = 1000.0                      # highRe: fluid density [kg/m^3]
     Cd = 1.1                            # highRe: drag coefficient
+
+    # Background fluid velocity ("wind"): u_f(t) = U_mean + U_amp sin(2 pi f_wind t)
+    U_mean = np.array([0.0, 0.0])       # steady part [m/s]
+    U_amp = np.array([1.0, 0.0])        # amplitude of the oscillating part [m/s]; zero for a steady flow
+    f_wind = 2.25                       # frequency of the oscillating part [Hz]; the beam's natural frequency is about 2.26 Hz
 
     # Geometry: straight beam along x
     N = 20              # number of nodes
@@ -259,7 +288,7 @@ def main():
     # Resistive Force Theory drag coefficients of a slender rod [Pa s]
     Ct = 2 * np.pi * mu / (np.log(2 * RodLength / h) - 0.5)    # tangential
     Cp = 4 * np.pi * mu / (np.log(2 * RodLength / h) + 0.5)    # normal
-    hydro = {'model': hydroModel, 'u_f': u_f, 'Ct': Ct, 'Cp': Cp,
+    hydro = {'model': hydroModel, 'Ct': Ct, 'Cp': Cp,      # hydro['u_f'] is set at every time step
              'rho_f': rho_f, 'Cd': Cd, 'r0': h}
 
     # Mass and weight: the total mass is split equally among the nodes
@@ -283,7 +312,14 @@ def main():
     q_old = q.copy()
     u_old = np.zeros(ndof)
 
-    for time_iter, t in enumerate(np.arange(0, totalTime, dt)):
+    time_array = np.arange(0, totalTime, dt)
+    tipPosition = np.zeros((time_array.size, 2))    # x and y of the last node at each time step
+    windVelocity = np.zeros((time_array.size, 2))   # u_f at each time step
+
+    for time_iter, t in enumerate(time_array):
+
+        # Fluid velocity at the end of the step, where implicit Euler evaluates the forces
+        hydro['u_f'] = getFluidVelocity(t + dt, U_mean, U_amp, f_wind)
 
         # Guess for Newton's method: the fixed DOFs keep these values
         q_guess = q_old.copy()
@@ -296,9 +332,14 @@ def main():
         u_old = (q_new - q_old) / dt
         q_old = q_new.copy()
 
-        if time_iter % 50 == 0:
-            plot_rod(q_new, ndof, t, RodLength, hydroModel)
+        tipPosition[time_iter] = q_new[ndof - 2:ndof]
+        windVelocity[time_iter] = hydro['u_f']
 
+        if time_iter % 10 == 0:  # every 0.05 s: several frames per period of the wind
+            plot_rod(q_new, ndof, t, RodLength, hydroModel, hydro['u_f'])
+
+    # Tip position and fluid velocity vs. time (both at the end of each step)
+    plot_tip_and_wind(time_array + dt, tipPosition, windVelocity)
     plt.show()
 
 
