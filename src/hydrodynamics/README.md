@@ -1,0 +1,3 @@
+# Hydrodynamics on a beam
+
+`beam_with_hydrodynamics.py` is a demo of hydrodynamic forces on a beam: an elastic cantilever, clamped at one end, falls under gravity through a fluid. Run it with `python src/hydrodynamics/beam_with_hydrodynamics.py`. Choose the model with `hydroModel` at the top of `main()`: `'lowRe'` for low Reynolds number drag (Resistive Force Theory), `'highRe'` for high Reynolds number (quadratic) drag, or `'none'` for no fluid. In the same block, set the background fluid velocity `u_f`, the viscosity `mu` (used by `'lowRe'`), and the fluid density `rho_f` and drag coefficient `Cd` (used by `'highRe'`).
