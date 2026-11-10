@@ -264,8 +264,8 @@ def main():
     Cd = 1.1                            # highRe: drag coefficient
 
     # Background fluid velocity ("wind"): u_f(t) = U_mean + U_amp sin(2 pi f_wind t)
-    U_mean = np.array([0.0, 0.0])       # steady part [m/s]
-    U_amp = np.array([1.0, 0.0])        # amplitude of the oscillating part [m/s]; zero for a steady flow
+    U_mean = np.array([0.0, 1.0])       # steady part [m/s]
+    U_amp = np.array([0.0, 1.0])        # amplitude of the oscillating part [m/s]; zero for a steady flow
     f_wind = 2.25                       # frequency of the oscillating part [Hz]; the beam's natural frequency is about 2.26 Hz
 
     # Geometry: straight beam along x
