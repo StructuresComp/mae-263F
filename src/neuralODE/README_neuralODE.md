@@ -40,12 +40,31 @@ Comparing the two separates parameter-identification difficulties from numerical
 
 - **`dtSim = dtData` (default):** the data are exactly what `backward_euler` computes, so `backward_euler` recovers $k$ and $b$ exactly. Any error from `odeint` comes from the discretization error of the data generator: its numerical damping is absorbed into the learned $k$ and $b$.
 - **Small `dtSim` (e.g. `1e-4`):** the data are close to the exact solution, and the roles reverse. `odeint` matches the data, and `backward_euler` carries the discretization error of its step `dtData`.
+
+## Effect of the integration time step
+
+With `SOLVER = 'odeint'`, the model is (nearly) the exact ODE, so any discretization error in the synthetic data shows up in the learned parameters. The table lists the learned values for the default parameters (true $k = 1$ N/m, $b = 1$ N s/m, `totalTime = 500` s). `dtSim` cannot exceed `dtData`, so `dtData` is raised with it in the last two rows.
+
+| `dtSim` [s] | `dtData` [s] | Learned $k$ [N/m] | Learned $b$ [N s/m] |
+|---|---|---|---|
+| 0.001 | 0.1 | 1.0005 (+0.05%) | 1.001 (+0.1%) |
+| 0.01 | 0.1 | 1.005 (+0.5%) | 1.010 (+1.0%) |
+| 0.1 (default) | 0.1 | 1.056 (+5.6%) | 1.098 (+9.8%) |
+| 0.2 | 0.2 | 1.123 (+12%) | 1.191 (+19%) |
+| 0.5 | 0.5 | 1.385 (+38%) | 1.427 (+43%) |
+
+With the default `dtSim = 0.1` s, the learned damping is $b = 1.098$ N s/m, 9.8% above the true value, and the learned stiffness is $k = 1.056$ N/m, 5.6% above. Both errors shrink in proportion to `dtSim`.
+
+Backward Euler is numerically dissipative: in a steady oscillation at frequency $\omega$, its amplification factor per step, $1/|1 - i\omega\Delta t|$, is less than one, so it damps each state at an artificial rate of about $\tfrac{1}{2}\omega^2\Delta t$. In the equation of motion, this numerical dissipation acts as extra damping of about $m\omega^2\Delta t$ (0.1 N s/m for $\Delta t = 0.1$ s) and extra stiffness of about $\tfrac{1}{2}b\omega^2\Delta t$ (0.05 N/m), so the learned model compensates mainly with a larger $b$ and partly with a larger $k$.
+
+The numerical dissipation acts on the steady forced response, so `totalTime` must be long compared with the decay time of the start-up transient, $2m/b = 2$ s. For an overdamped system ($b > 2\sqrt{mk}$), this decay time grows to about $b/k$, so a larger $b$ needs a longer record.
+
 ## Running the code
 
 From the repository root, install the dependencies, including PyTorch and torchdiffeq, and run the script:
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-neuralode.txt
 python src/neuralODE/neuralODE_massSpringDamper.py
 ```
 

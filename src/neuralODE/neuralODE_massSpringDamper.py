@@ -227,21 +227,21 @@ def main():
     # Physical parameters: m and the forcing are known; k and b are to be learned
     m = 1.0             # mass [kg]
     k_true = 1.0        # spring stiffness [N/m]
-    b_true = 10.0       # viscous damping coefficient [N s/m]
+    b_true = 1.0        # viscous damping coefficient [N s/m]
     F0 = 0.1            # driving amplitude [N]
     omega = 1.0         # driving frequency [rad/s]
     x0 = 0.0            # initial displacement [m]
     v0 = 0.0            # initial velocity [m/s]
 
     # Synthetic data
-    totalTime = 50.0    # length of the record [s]
+    totalTime = 500.0    # length of the record [s]
     dtSim = 0.1         # implicit Euler time step [s]; with dtSim = dtData, backward_euler reproduces the data exactly
     dtData = 0.1        # time between measurements [s]; also the backward_euler time step
 
     # Training
     k_guess = 2.0       # initial guess for k [N/m]
     b_guess = 5.0       # initial guess for b [N s/m]
-    nEpochs = 500       # number of Adam iterations
+    nEpochs = 200       # number of Adam iterations
     learningRate = 0.03
     printEvery = 100
 
